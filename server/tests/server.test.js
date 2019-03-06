@@ -10,14 +10,26 @@ const todos = [{
     text: 'Some Text 1'
 }, {
     _id: new ObjectID(),
-    text: 'Some Text 2'
+    text: 'Some Text 2',
+    completed: true
 }];
 
-beforeEach((done) => {
+beforeEach(function(done) {
+    this.timeout(5000);
     Todo.deleteMany({}).then(() => {
         return Todo.insertMany(todos);
     }).then(() => done());
 });
+
+// beforeEach(function(done) { // dont use arrow function to use this.timeout
+//     this.timeout(5000); // override default 2000 ms
+  
+//     Todo.remove({}).then(() => {
+//       return Todo.insertMany(todos);
+//     }).then((docs) => {
+//       done();
+//     });
+//   })
 
 describe('POST /todos', () => {
     it('Should Create New Todo', (done) => {
@@ -130,5 +142,45 @@ describe('DELETE /todos/:id', () => {
             .delete(`/todos/123`)
             .expect(404)
             .end(done)
+    });
+});
+
+describe('PATCH /todos/:id', () => {
+    it('should update the todo', (done) => {
+        var hexId = todos[0]._id.toHexString();
+        var text = "some test text";
+
+        request(app)
+            .patch(`/todos/${hexId}`)
+            .send({
+                text: text,
+                completed: true
+            })
+            .expect(200)
+            .expect((res) => {
+                expect(res.body.todo.text).toBe(text);
+                expect(res.body.todo.completed).toBe(true);
+                // expect(res.body.todo.completedAt).toBeA('number')
+            })
+            .end(done);
+    });
+
+    it('should clear completedAt when to do is not completed', (done) => {
+        var hexId = todos[1]._id.toHexString();
+        var text = "some test text 2";
+
+        request(app)
+            .patch(`/todos/${hexId}`)
+            .send({
+                text: text,
+                completed: false
+            })
+            .expect(200)
+            .expect((res) => {
+                expect(res.body.todo.text).toBe(text);
+                expect(res.body.todo.completed).toBe(false);
+                expect(res.body.todo.completedAt).toBe(null);
+            })
+            .end(done);
     });
 });
