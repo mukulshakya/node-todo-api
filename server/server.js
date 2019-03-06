@@ -1,3 +1,5 @@
+require('./config/config');
+
 const {ObjectID} = require('mongodb');
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -9,7 +11,7 @@ var {Users} = require('./models/user');
 
 var app = express();
 
-const port = process.env.PORT || 3000
+const port = process.env.PORT
 // const port = process.env.OPENSHIFT_NODEJS_PORT || 3000
 
 app.use(bodyParser.json());
