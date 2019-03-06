@@ -15,7 +15,7 @@ const port = process.env.PORT || 3000
 app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
-    res.send('App Working Fine\n\nOther Routes Available\n* GET /todos\n* GET /todos/:id\n* POST /todos\n* DELETE /todos/:id');
+    res.send('App Working Fine\n\n********Routes Available********\n* GET /todos\n* GET /todos/:id\n* POST /todos\n* DELETE /todos/:id');
 })
 
 app.post('/todos', (req, res) => {
